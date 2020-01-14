@@ -10,6 +10,7 @@ class card {
         this.face = face;
         this.suit = suit;
         this.score = score;
+        this.visible = true;
         this.image = new Image(120, 184);
         this.image.src = "./images/cards/" + this.face + this.suit[0] + ".png";
         this.image.classList.add('crd-img');  
@@ -17,6 +18,17 @@ class card {
 
     toText = function() {
         return this.face + ' of ' + this.suit;
+    }
+
+    flip = function() {
+        if (this.visible = true){
+            this.visible = false;
+            this.image.style.opacity = "1;"
+            
+        } else{
+            this.visible = true;
+            this.image.style.opacity = "0;";
+        }
     }
 
 }
@@ -35,10 +47,6 @@ class deck {
         }
         console.log('New Deck');
         this.shuffle();
-        console.log(this.cards.length);
-        for (var x = 0; x < this.cards.length; x++){
-            console.log(x + ' - ' + this.cards[x].toText());
-        }
     }
 
     shuffle = function() {
@@ -49,7 +57,6 @@ class deck {
             for (var i = 52 * this.count; i > 0; i--){
                 var rndNum = Math.floor((Math.random() * i));                
                 tempDeck.push(this.cards[rndNum]);
-                console.log(i + ' - ' + rndNum + ' - ' + this.cards[rndNum].toText());
                 for (var r = rndNum; r < this.cards.length - 1; r++)
                     this.cards[r] = this.cards[r + 1];                
                 
@@ -79,7 +86,7 @@ class hand{
             handScore += this.cards[i].score;
         }
         if (handScore > 21){
-            for (var i = 0; i < this.cards.length; i++){
+            for (var i = this.cards.length - 1; i >= 0; i--){
                 if (this.cards[i].score == 11){
                     this.cards[i].score = 1;
                     handScore -= 10;
@@ -139,16 +146,32 @@ function dealGame(){
     player1.cards.push(deck1.cards.pop());
     dealer.cards.push(deck1.cards.pop());
 
+    dealer.cards[1].flip();
+
     var p1Div = document.getElementById('player1');
     var dDiv = document.getElementById('dealer');
 
+    // Show both player cards
     for (var cnt = 0; cnt <=1; cnt++){
         p1Div.appendChild(player1.cards[cnt].image);
-        dDiv.appendChild(dealer.cards[cnt].image);
-    }
+    }    
 
-    p1Score.innerHTML = player1.calcScore();
-    dScore.innerHTML = dealer.calcScore();
+    // Show only first Dealer card
+    dDiv.appendChild(dealer.cards[0].image);
+
+    let plyr1Score = player1.calcScore();
+    let dlrScore = dealer.calcScore();
+
+    p1Score.innerHTML = plyr1Score;
+    dScore.innerHTML = dealer.cards[0].score;
+
+    if (plyr1Score == 21 || dlrScore == 21){
+        gameOver();
+        if (dlrScore == 21){
+            dDiv.appendChild(dealer.cards[1].image);
+            dScore.innerHTML = dlrScore;
+        }
+    }
 }
 
 function hitMe(){
@@ -159,7 +182,13 @@ function hitMe(){
 
     player1.cards.push(deck1.cards.pop());
     p1Div.appendChild(player1.cards[player1.cards.length - 1].image);
-    p1Score.innerHTML = player1.calcScore();
+
+    let pScore = player1.calcScore();
+    p1Score.innerHTML = pScore;
+
+    if (pScore > 21){
+        gameOver();
+    }
 }
 
 function stay(){
@@ -178,11 +207,34 @@ function stay(){
     var dDiv = document.getElementById('dealer')
     var dScore = document.getElementById('dealer-score');
 
+    dDiv.appendChild(dealer.cards[1].image);
+    dScore.innerHTML = dealer.calcScore();
+
     while (dealer.calcScore() < 16){
         dealer.cards.push(deck1.cards.pop());
         dDiv.appendChild(dealer.cards[dealer.cards.length - 1].image);
         dScore.innerHTML = dealer.calcScore();
     }
+
+}
+
+function resetControls() {
+    var dealBtn = document.getElementById('dealBtn');
+    dealBtn.classList.remove('hide');
+
+    var hitBtn = document.getElementById('hitBtn')
+    hitBtn.classList.add('hide');
+
+    var dblBtn = document.getElementById('dblBtn');
+    dblBtn.classList.add('hide');
+
+    var stayBtn = document.getElementById('stayBtn')
+    stayBtn.classList.add('hide');
+    
+}
+
+function gameOver(){
+    resetControls();
 
 }
 
