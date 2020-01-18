@@ -1,4 +1,5 @@
 html{
+    font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
     background: rgb(1,196,15);
@@ -25,14 +26,28 @@ html{
 }
 
 .stats{
+    justify-self: center;
+    align-self: center;
     text-align: center;
+    background-color: #285028;
+    border-radius: 50%;
+    height: 130px;
+    width: 130px;
+    box-shadow: 0px 0px 16px 2px rgba(0, 0, 0, 0.5);
 }
 
 .stats h2{
-    color: rgb(221, 158, 0);
+    color: rgb(200, 200, 200);
     font-size: 24px;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-    margin: 20px auto 0px;
+    text-shadow: 0px 0px 8px rgba(0, 0, 0, 0.7);
+    margin: 32px auto 0px;
+}
+
+.stats h3{
+    color: rgb(200, 200, 200);
+    font-size: 34px;
+    text-shadow: 0px 0px 8px rgba(0, 0, 0, 0.7);
+    margin: 5px auto;
 }
 
 .stats div{
@@ -41,18 +56,11 @@ html{
     margin: 0px auto;
     align-items: center;
     text-align: center;
-    height: 100px;
+    /*height: 100px;
     width: 100px;
     /*background-color: rgba(51, 255, 0, 0.3);
     border-radius: 20%;
     box-shadow: 0px 0px 16px 2px rgba(0, 0, 0, 0.5);*/
-}
-
-.stats h3{
-    font-size: 40px;
-    margin: 0 auto;
-    color: rgb(1, 58, 1);
-    text-shadow: 2px 2px 4px rgba(13, 65, 0, 0.5);;
 }
 
 .player{
@@ -115,6 +123,14 @@ button::-moz-focus-inner, a::-moz-focus-inner { border:0; }
     animation: fade 1s ease forward;
 }
 
+.winner{
+    animation: 1500ms linear 500ms infinite alternate win;
+}
+
+.loser{
+    animation: lose 1500ms ease forwards;
+}
+
 @keyframes fade{
     from {
         opacity: 1;
@@ -123,5 +139,27 @@ button::-moz-focus-inner, a::-moz-focus-inner { border:0; }
     to{
         opacity: 0;
         pointer-events: none;
+    }
+}
+
+@keyframes win{
+    from {
+        background-color: #285028;
+        box-shadow: 0px 0px 16px 2px rgba(0, 0, 0, 0.5);
+    }
+    to {
+        background-color: rgba(0, 255, 0, .8);
+        box-shadow: 0px 0px 20px 4px rgba(0, 255, 0, 1);
+    }
+}
+
+@keyframes lose{
+    from {
+        background-color: #285028;
+        box-shadow: 0px 0px 16px 2px rgba(0, 0, 0, 0.5);
+    }
+    to {
+        background-color: rgba(255, 0, 0, .8);
+        box-shadow: 0px 0px 20px 4px rgba(255, 0, 0, 1);
     }
 }
