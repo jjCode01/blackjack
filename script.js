@@ -1,8 +1,32 @@
+
 // Constant variable for use in creating card objects
 const FACES = new Array('Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King')
 const SUITES = new Array('Club', 'Diamond', 'Heart', 'Spade');
 const SCORES = new Array(11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10);
 
+let wins = 0;
+let loses = 0;
+let push = 0;
+
+//Document Elements
+let dealBtn = document.getElementById("dealBtn");
+let hitBtn = document.getElementById('hitBtn');
+let dblBtn = document.getElementById('dblBtn');
+let stayBtn = document.getElementById('stayBtn')
+
+let p1Div = document.getElementById("player1");
+let dDiv = document.getElementById('dealer');
+
+let p1Score = document.getElementById('player1-score');
+let dScore = document.getElementById('dealer-score');
+
+let p1Stats = document.getElementById('player1-stats');
+let dStats = document.getElementById('dealer-stats');
+
+let betPanel = document.getElementById('betPanel');
+let winSpan = document.getElementById('wins');
+let losesSpan = document.getElementById('loses');
+let pushSpan = document.getElementById('push');
 
 // Card objects
 class card {
@@ -12,36 +36,28 @@ class card {
         this.score = score;
         this.visible = true;
         this.image = new Image(120, 184);
-
-        if (this.face.length <= 2)
-            this.image.src = "./images/cards/" + this.face + this.suit[0] + ".png";
-        else
-            this.image.src = "./images/cards/" + this.face[0] + this.suit[0] + ".png";
-
+        this.setImage();
         this.image.classList.add('crd-img');  
         this.image.alt = this.toText;
     }
 
-    get toText() {
-        return this.face + ' of ' + this.suit;
-    }
+    toText = () => `${this.face} of ${this.suit}`;
+
+    setImage = () => this.image.src = (this.visible) ? ((this.face.length <= 2) ? 
+        `./images/cards/${this.face}${this.suit[0]}.png` : 
+        `./images/cards/${this.face[0]}${this.suit[0]}.png`) : 
+        "./images/cards/blue_back.png";
 
     flip = () => {
-        if (this.visible = true){
-            this.visible = false;
-            this.image.style.opacity = "1;"
-            
-        } else{
-            this.visible = true;
-            this.image.style.opacity = "0;";
-        }
+        this.visible = this.visible ? false : true;        
+        this.setImage();
     }
 }
 
 // Deck objects
 class deck {
     // pass in argument count for the number of decks to use in game
-    constructor(count) {
+    constructor(count=1) {
         this.count = count;
         this.cards = [];
         for (let c = 1; c <= count; c++){ 
@@ -50,20 +66,14 @@ class deck {
                     this.cards.push(new card(FACES[f], SUITES[s], SCORES[f]));
             }
         }
-        console.log('New Deck');
         this.shuffle();
-    }
-    
+    }    
 
     shuffle = () => {
         let counter = this.cards.length; // Start at last element
-        while (counter > 0){        // Loop backword to first element
-
+        while (counter-- >= 0){        // Loop backword to first element
             // Generate random number between 0 and current value of counter
-            let randNum = Math.floor(Math.random() * counter);
-            
-            counter--; // Reduce counter by 1
-		
+            let randNum = Math.floor(Math.random() * counter);		
 		    //Swap current element at index [counter] with random preceding element
             let temp = this.cards[counter];
             this.cards[counter] = this.cards[randNum];
@@ -75,6 +85,7 @@ class deck {
     dealCard = () => this.cards.pop();
 }
 
+// Hand objects
 class hand{
     constructor() {
         this.cards = [];
@@ -82,19 +93,16 @@ class hand{
     }
 
     calcScore = () => {
-        let handScore = 0;
-        for (let i = 0; i < this.cards.length; i++){
-            handScore += this.cards[i].score;
-        }
-        if (handScore > 21){
+        let handScore = this.cards.reduce((accumulator, crd) => accumulator + crd.score, 0);
+
+        if (handScore > 21 && this.cards.some(crd => crd.score === 11)){
             /* Loop backward through hand and reduce score of any
-               aces from 11 to 1 */
+            aces from 11 to 1 */
             for (let i = this.cards.length - 1; i >= 0; i--){
                 if (this.cards[i].score == 11){
                     this.cards[i].score = 1;
                     handScore -= 10;
-                    if (handScore <= 21)
-                        break;
+                    if (handScore <= 21) break;
                 }
             }
         }
@@ -110,35 +118,18 @@ let deck1 = new deck(1);
 let player1;
 let dealer;
 
-
-function dealGame(){
-    var p1Div = document.getElementById('player1');
-    var dDiv = document.getElementById('dealer');
-
-    var p1Score = document.getElementById('player1-score');
-    var dScore = document.getElementById('dealer-score');
-
-    var p1Stats = document.getElementById('player1-stats');
-    var dStats = document.getElementById('dealer-stats');
-
+dealBtn.addEventListener("click", () => {
     p1Stats.classList.remove('winner');
     dStats.classList.remove('winner');
     p1Stats.classList.remove('loser');
     dStats.classList.remove('loser');
-    p1Stats.style.backgroundColor = "#285028";
-    dStats.style.backgroundColor = "#285028";
-
-    var hitBtn = document.getElementById('hitBtn');
-    hitBtn.classList.remove('hide');
-
-    var dblBtn = document.getElementById('dblBtn');
-    dblBtn.classList.remove('hide');
-
-    var stayBtn = document.getElementById('stayBtn')
-    stayBtn.classList.remove('hide');
-
-    var dealBtn = document.getElementById('dealBtn');
+    p1Stats.style.backgroundColor = "none";
+    dStats.style.backgroundColor = "none";
     dealBtn.classList.add('hide');
+    betPanel.classList.add('lower');
+    hitBtn.classList.remove('hide');
+    dblBtn.classList.remove('hide');
+    stayBtn.classList.remove('hide');
 
     // Clear any existing card images and scores
     p1Div.innerHTML = '';
@@ -159,38 +150,30 @@ function dealGame(){
     player1.cards.push(deck1.cards.pop());
     dealer.cards.push(deck1.cards.pop());
 
-    dealer.cards[1].flip();
-
-    var p1Div = document.getElementById('player1');
-    var dDiv = document.getElementById('dealer');
-
-    // Show both player cards
-    for (var cnt = 0; cnt <=1; cnt++){
-        p1Div.appendChild(player1.cards[cnt].image);
-    }    
-
-    // Show only first Dealer card
-    dDiv.appendChild(dealer.cards[0].image);
-
     let plyr1Score = player1.calcScore();
     let dlrScore = dealer.calcScore();
 
+    // Set image for dealer 2nd card to back of card
+    if (dlrScore < 21)
+        dealer.cards[1].flip();
+
+    // Show cards
+    for (var cnt = 0; cnt <=1; cnt++){
+        p1Div.appendChild(player1.cards[cnt].image);
+        dDiv.appendChild(dealer.cards[cnt].image);
+    }        
+
     p1Score.innerHTML = plyr1Score;
-    dScore.innerHTML = dealer.cards[0].score;
+    dScore.innerHTML = dealer.cards[0].score;   
 
     if (plyr1Score == 21 || dlrScore == 21){
         gameOver();
-        if (dlrScore == 21){
-            dDiv.appendChild(dealer.cards[1].image);
-            dScore.innerHTML = dlrScore;
-        }
-    }
-}
+        if (dlrScore == 21)
+            dScore.innerHTML = dlrScore;            
+    }       
+})
 
-function hitMe(){
-    var p1Div = document.getElementById('player1');
-    var dblBtn = document.getElementById('dblBtn');
-    var p1Score = document.getElementById('player1-score');
+const hit = () => {
     dblBtn.classList.add('hide');
 
     player1.cards.push(deck1.cards.pop());
@@ -199,65 +182,67 @@ function hitMe(){
     let pScore = player1.calcScore();
     p1Score.innerHTML = pScore;
 
-    if (pScore > 21){
+    if (pScore > 21)
         gameOver();
-    }
 }
 
-function stay(){
-    var dDiv = document.getElementById('dealer');
-    var dScore = document.getElementById('dealer-score');
-
+const stay = () => {
+    dealer.cards[1].flip();
+    dDiv.removeChild(dDiv.childNodes[1]);
     dDiv.appendChild(dealer.cards[1].image);
     dScore.innerHTML = dealer.calcScore();
 
     while (dealer.calcScore() < 16){
         dealer.cards.push(deck1.cards.pop());
-        dDiv.appendChild(dealer.cards[dealer.cards.length - 1].image);
-        dScore.innerHTML = dealer.calcScore();
+        dDiv.appendChild(dealer.cards[dealer.cards.length - 1].image);        
     }
-
+    dScore.innerHTML = dealer.calcScore();
     gameOver();
 }
 
-function resetControls() {
-    var dealBtn = document.getElementById('dealBtn');
+hitBtn.addEventListener('click', hit)
+dblBtn.addEventListener('click', () =>{
+    hit();
+    stay();
+})
+stayBtn.addEventListener('click', stay)
+
+const resetControls = () => {
     dealBtn.classList.remove('hide');
-
-    var hitBtn = document.getElementById('hitBtn')
+    betPanel.classList.remove('lower');
     hitBtn.classList.add('hide');
-
-    var dblBtn = document.getElementById('dblBtn');
     dblBtn.classList.add('hide');
-
-    var stayBtn = document.getElementById('stayBtn')
-    stayBtn.classList.add('hide');
-    
+    stayBtn.classList.add('hide');    
 }
 
-function gameOver(){
+const gameOver = () => {
     resetControls();
 
-    var p1Stats = document.getElementById('player1-stats');
-    var dStats = document.getElementById('dealer-stats');
+    const playerWin = () => {
+        p1Stats.classList.add('winner');
+        dStats.classList.add('loser');
+        wins++;
+        winSpan.innerHTML = wins;
+    }
 
-    if (player1.score > 21){
+    const playerLose = () => {
         dStats.classList.add('winner');
         p1Stats.classList.add('loser');
-    } else {
-        if (dealer.score > 21){
-            p1Stats.classList.add('winner');
-            dStats.classList.add('loser');
-        } else {
-            if (player1.score > dealer.score){
-                p1Stats.classList.add('winner');
-                dStats.classList.add('loser');
-            } else if (dealer.score > player1.score){
-                dStats.classList.add('winner');
-                p1Stats.classList.add('loser');
-            }
-        }
+        loses++
+        losesSpan.innerHTML = loses;
     }
-}
 
+    if (player1.score > 21){
+        playerLose();
+    } else {
+        if (dealer.score > 21)
+            playerWin();
+        else if (player1.score != dealer.score)
+            (player1.score > dealer.score) ? playerWin() : playerLose();
+        else {
+            push++;
+            pushSpan.innerHTML = push;
+        }
+    }    
+}
 
