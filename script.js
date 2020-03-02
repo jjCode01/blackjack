@@ -7,6 +7,8 @@ const SCORES = new Array(11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10);
 let wins = 0;
 let loses = 0;
 let push = 0;
+let winStreak = 0;
+let loseStreak = 0;
 
 //Document Elements
 let dealBtn = document.getElementById("dealBtn");
@@ -23,10 +25,18 @@ let dScore = document.getElementById('dealer-score');
 let p1Stats = document.getElementById('player1-stats');
 let dStats = document.getElementById('dealer-stats');
 
+let incBet = document.getElementById('increaseBet');
+let decBet = document.getElementById('reduceBet');
+
 let betPanel = document.getElementById('betPanel');
 let winSpan = document.getElementById('wins');
 let losesSpan = document.getElementById('loses');
 let pushSpan = document.getElementById('push');
+let winStreakSpan = document.getElementById('winStreak');
+let loseStreakSpan = document.getElementById('loseStreak');
+
+let betSpan = document.getElementById('p1Bet');
+let bankSpan = document.getElementById('p1Bank');
 
 // Card objects
 class card {
@@ -85,11 +95,31 @@ class deck {
     dealCard = () => this.cards.pop();
 }
 
+class bank{
+    constructor(change=100){
+        this.balance = change;
+        this.bet = 0;
+    }
+
+    placeBet = (betVal) => {
+        if (betVal <= this.balance && betVal > 0){
+            //this.balance -= (betVal - this.bet);
+            this.bet = betVal;
+        } else if (betVal > this.balance){
+            this.bet = this.balance;
+            //this.balance = 0;
+        } else if (betVal <= 0){
+            this.bet = 0;
+        }
+    }
+}
+
 // Hand objects
 class hand{
     constructor() {
         this.cards = [];
         this.score = 0;
+        this.multiplier = 1;
     }
 
     calcScore = () => {
@@ -111,12 +141,34 @@ class hand{
     }
 }
 
+const updateBet = () => {
+    betSpan.innerHTML = bank1.bet;
+    bankSpan.innerHTML = bank1.balance - bank1.bet;
+}
+
 // Create new deck on page load
 let deck1 = new deck(1);
+
+let bank1 = new bank(200);
+bank1.placeBet(10);
 
 // Create player and dealer variables on page load
 let player1;
 let dealer;
+
+incBet.addEventListener("click", () =>{
+    if (bank1.balance >= bank1.bet + 5){
+        bank1.placeBet(bank1.bet + 5);
+        updateBet();
+    }
+})
+
+decBet.addEventListener("click", () =>{
+    if (bank1.bet >= 10){
+        bank1.placeBet(bank1.bet - 5);
+        updateBet();
+    }
+})
 
 dealBtn.addEventListener("click", () => {
     p1Stats.classList.remove('winner');
@@ -166,10 +218,12 @@ dealBtn.addEventListener("click", () => {
     p1Score.innerHTML = plyr1Score;
     dScore.innerHTML = dealer.cards[0].score;   
 
-    if (plyr1Score == 21 || dlrScore == 21){
+    if (plyr1Score === 21 || dlrScore === 21){
+        if (plyr1Score === 21)
+            player1.multiplier = 1.5;        
+        if (dlrScore === 21)
+            dScore.innerHTML = dlrScore;
         gameOver();
-        if (dlrScore == 21)
-            dScore.innerHTML = dlrScore;            
     }       
 })
 
@@ -222,14 +276,24 @@ const gameOver = () => {
         p1Stats.classList.add('winner');
         dStats.classList.add('loser');
         wins++;
+        winStreak++;
+        loseStreak = 0;
         winSpan.innerHTML = wins;
+        bank1.balance += bank1.bet * player1.multiplier;
+        updateBet();
     }
 
     const playerLose = () => {
         dStats.classList.add('winner');
         p1Stats.classList.add('loser');
-        loses++
+        loses++;
+        loseStreak++;
+        winStreak = 0;
         losesSpan.innerHTML = loses;
+        bank1.balance -= bank1.bet;
+        if (bank1.balance < bank1.bet)
+            bank1.bet = bank1.balance;
+        updateBet();
     }
 
     if (player1.score > 21){

@@ -21,6 +21,9 @@
                     <div>Wins:  <span id="wins">0</span></div>
                     <div>Loses: <span id="loses">0</span></div>
                     <div>Push:  <span id="push">0</span></div> 
+                    <div>Win Streak: <span id="winStreak"></span></div>
+                    <div>Lose Streak: <span id="loseStreak"></span></div>
+                    <div>Hightest Cash: <span id="highestCash"></span></div>
                 </div>
             </div>           
             
@@ -42,14 +45,16 @@
         
     </div>
     <div class="bet-panel" id="betPanel">
-    
-        <button class="btn btn--rnd" id="bet100">$100</button>
-        <button class="btn btn--rnd" id="bet100">$50</button>
-        <button class="btn btn--rnd" id="bet100">$25</button>
-        <button class="btn btn--rnd" id="bet100">$10</button>
-        <button class="btn btn--rnd" id="bet100">$5</button>
-        
-        <button class="btn btn--rnd" id="dealBtn">Deal</button> 
+        <div class="bank">
+            <h3>Bank: <span id="p1Bank">190</span></h3>
+            <h3>Bet: <span id="p1Bet">10</span></h3>
+        </div>
+        <div class="deal">
+            <button class="btn btn--rnd" id="reduceBet">-</button>
+            <button class="btn btn--rnd" id="dealBtn">Deal</button> 
+            <button class="btn btn--rnd" id="increaseBet">+</button>
+        </div>     
+
                     
     </div>
     <script src="./script.js"></script>

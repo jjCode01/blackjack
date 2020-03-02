@@ -10,7 +10,6 @@ body{
     width: 100vw;
     background: rgb(1,196,15);
     background: radial-gradient(circle, rgba(1,196,15,1) 0%, rgba(0,172,19,1) 52%, rgba(0,124,5,1) 100%);
-    border: 1px solid black;
     box-sizing: border-box;
     overflow-y: hidden;
 }
@@ -85,14 +84,14 @@ h3{
     justify-content: center;
     align-content: center;
     margin: 10px 0;;
-    min-height: 30vh;
+    min-height: 25vh;
 }
 
 .player img{
     border-radius: 5px;
     box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.5);
     transform: rotate(2deg);
-    height: 30vh;
+    height: 25vh;
     width: auto;
 }
 
@@ -109,8 +108,6 @@ h3{
     padding: 5px;
 }
 
-
-
 .controls{
     display: flex;
     flex-wrap: wrap;    
@@ -121,16 +118,21 @@ h3{
 
 .bet-panel{
     position: absolute;
-    display: flex;
-    justify-content: space-evenly;
+    text-align: center;
+    justify-content: center;
     bottom: 0;
     left: 0;
     height: 25%;
     width: 100%;
-    border: 2px solid yellow;
+    /* border: 2px solid yellow; */
     background-color: #285028;
     box-sizing: border-box;
-    animation: raise 1s ease; 
+    animation: raise 500ms ease;
+    box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.5);
+}
+
+.bank{
+    color: white;
 }
 
 
@@ -144,7 +146,7 @@ h3{
     font-weight: bold;
     background-color: rgba(4, 105, 0, 0.7);
     box-shadow: 0px 0px 16px 1px rgba(0, 80, 0, 0.5);
-    transition: all 300ms ease-in;
+    transition: all 200ms ease-in;
     margin: 2vh;
 }
 
@@ -171,8 +173,8 @@ button::-moz-focus-inner, a::-moz-focus-inner { border:0; }
 }
 
 .lower{
-    bottom: -25%;
-    animation: lower 1s ease;
+    left: -100%;
+    animation: lower 500ms ease;
 }
 
 .winner{
@@ -196,19 +198,19 @@ button::-moz-focus-inner, a::-moz-focus-inner { border:0; }
 
 @keyframes lower{
     from {
-        bottom: 0px;
+        left: 0px;
     }
     to {
-        bottom: -25%;
+        left: -100%;
     }
 }
 
 @keyframes raise{
     from {
-        bottom: -25%;
+        left: -100%;
     }
     to {
-        bottom: 0;
+        left: 0px;
     }
 }
 
