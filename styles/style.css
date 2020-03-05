@@ -8,8 +8,10 @@ html, body{
 body{
     height: 100vh;
     width: 100vw;
-    background: rgb(1,196,15);
-    background: radial-gradient(circle, rgba(1,196,15,1) 0%, rgba(0,172,19,1) 52%, rgba(0,124,5,1) 100%);
+    /* background: rgb(1,196,15);
+    background: radial-gradient(circle, rgba(1,196,15,1) 0%, rgba(0,172,19,1) 52%, rgba(0,124,5,1) 100%); */
+    background: rgb(0, 27, 2);
+    background: radial-gradient(circle, rgb(67, 77, 67) 0%, rgb(36, 41, 37) 52%, rgb(7, 22, 7) 100%);
     box-sizing: border-box;
     overflow-y: hidden;
 }
