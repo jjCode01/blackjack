@@ -293,7 +293,6 @@ const gameOver = () => {
         bank1.balance -= bank1.bet;
         if (bank1.balance < bank1.bet)
             bank1.bet = bank1.balance;
-        updateBet();
     }
 
     if (player1.score > 21){
@@ -307,6 +306,8 @@ const gameOver = () => {
             push++;
             pushSpan.innerHTML = push;
         }
-    }    
+    }
+    bank1.placeBet(10);
+    updateBet();
 }
 
