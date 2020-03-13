@@ -4,12 +4,12 @@ html body {
 }
 
 body{
-    background: rgb(20, 20, 20);
+    background: rgb(31, 31, 31);
     text-align: center;
 }
 
 h1 {
-    margin: 15% auto 10px;
+    margin: 10% auto 10px;
     color: wheat;
     font-size: 4rem;
 }
@@ -17,7 +17,7 @@ h1 {
 .btn{
     background: orangered;
     width: 200px;
-    height: 100px;
+    height: 80px;
     font-size: 1.5rem;
     border-radius: 10px;
     margin: 20px auto;
